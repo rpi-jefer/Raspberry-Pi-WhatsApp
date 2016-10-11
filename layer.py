@@ -6,86 +6,77 @@ GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(14, GPIO.OUT)
 
-from yowsup.layers                                     import YowLayer
-from yowsup.layers.interface                           import YowInterfaceLayer, ProtocolEntityCallback
-from yowsup.layers.protocol_messages.protocolentities  import TextMessageProtocolEntity
-from yowsup.layers.protocol_receipts.protocolentities  import OutgoingReceiptProtocolEntity
-from yowsup.layers.protocol_acks.protocolentities      import OutgoingAckProtocolEntity
- 
-class EchoLayer(YowInterfaceLayer):
+from yowsup.layers.interface                           import YowInterfaceLayer                 #Reply to the message
+from yowsup.layers.interface                           import ProtocolEntityCallback            #Reply to the message
+from yowsup.layers.protocol_messages.protocolentities  import TextMessageProtocolEntity         #Body message
+from yowsup.layers.protocol_presence.protocolentities  import AvailablePresenceProtocolEntity   #Online
+from yowsup.layers.protocol_presence.protocolentities  import UnavailablePresenceProtocolEntity #Offline
+from yowsup.layers.protocol_presence.protocolentities  import PresenceProtocolEntity            #Name presence
+from yowsup.layers.protocol_chatstate.protocolentities import OutgoingChatstateProtocolEntity   #is writing, writing pause
+from yowsup.common.tools                               import Jid                               #is writing, writing pause
 
+name = "NAMEPRESENCE"
+
+class EchoLayer(YowInterfaceLayer):
     @ProtocolEntityCallback("message")
     def onMessage(self, messageProtocolEntity):
-
         if messageProtocolEntity.getType() == 'text':
-            self.onTextMessage(messageProtocolEntity)
-
-        self.toLower(messageProtocolEntity.ack())
-        self.toLower(messageProtocolEntity.ack(True))
-
+            time.sleep(0.5)
+            self.toLower(messageProtocolEntity.ack()) #Set received (double v)
+            time.sleep(0.5)
+            self.toLower(PresenceProtocolEntity(name = name)) #Set name Presence
+            time.sleep(0.5)
+            self.toLower(AvailablePresenceProtocolEntity()) #Set online
+            time.sleep(0.5)
+            self.toLower(messageProtocolEntity.ack(True)) #Set read (double v blue)
+            time.sleep(0.5)
+            self.toLower(OutgoingChatstateProtocolEntity(OutgoingChatstateProtocolEntity.STATE_TYPING, Jid.normalize(messageProtocolEntity.getFrom(False)) )) #Set is writing
+            time.sleep(1)
+            self.toLower(OutgoingChatstateProtocolEntity(OutgoingChatstateProtocolEntity.STATE_PAUSED, Jid.normalize(messageProtocolEntity.getFrom(False)) )) #Set no is writing
+            time.sleep(1)
+            self.onTextMessage(messageProtocolEntity) #Send the answer
+            time.sleep(1)
+            self.toLower(UnavailablePresenceProtocolEntity()) #Set offline
 
     @ProtocolEntityCallback("receipt")
     def onReceipt(self, entity):
-        print "ack: ", entity.ack()
+        print entity.ack()
         self.toLower(entity.ack())
 
-
     def onTextMessage(self,messageProtocolEntity):
+        namemitt   = messageProtocolEntity.getNotify()
+        message    = messageProtocolEntity.getBody()
+        recipient  = messageProtocolEntity.getFrom()
+        textmsg    = TextMessageProtocolEntity
 
-        nombre  = messageProtocolEntity.getNotify()
-        mensaje = messageProtocolEntity.getBody()
-        para    = messageProtocolEntity.getFrom()
+        print "Mesaje: "+str(message)
 
-        if mensaje=='Hola Turingpi':
+        if message == 'Hola Turingpi':
+            answer = "Hola como has estado hoy ?"
+            self.toLower(textmsg(answer, to = recipient ))
+            print answer
 
-            msg1 = "Hola "+nombre+" como ha estado hoy ?" 
-            print msg1
+        elif message == 'Bien gracias':
+            answer = "Me alegra\n Que deseas hacer? \n 1. Para encender bombillo.\n 0. Para apagar bombillo."
+            self.toLower(textmsg(answer, to = recipient ))
+            print answer
 
-            self.toLower(TextMessageProtocolEntity( msg1, to = para ))
-
-        elif mensaje == 'Bien gracias':
-
-            msg2 = "Me alegra"
-            msg3 = "Que deseas hacer?"
-            msg4 = "1. Para encender bombillo."
-            msg5 = "0. Para apagar bombillo."
-            print msg2
-            print msg3
-            print msg4
-            print msg5
-
-            self.toLower(TextMessageProtocolEntity( msg2, to = para ))
-            self.toLower(TextMessageProtocolEntity( msg3, to = para ))
-            self.toLower(TextMessageProtocolEntity( msg4, to = para ))
-            self.toLower(TextMessageProtocolEntity( msg5, to = para ))
-
-        elif mensaje == '1':
-
-            msg6 = "Opción 1"
-            msg7 = "El bombillo se ha encendido"
-            print msg6
-            print msg7
-            
+        elif message == '1':
+            answer = "Opción 1\n El bombillo se ha encendido"
             GPIO.output(14, True) # Pin 2 en alto
 
-            self.toLower(TextMessageProtocolEntity( msg6, to = para ))
-            self.toLower(TextMessageProtocolEntity( msg7, to = para ))
+            self.toLower(textmsg(answer, to = recipient ))
+            print answer
 
-        elif mensaje == '0':
+        elif message == '0':
 
-            msg8 = "Opción 0"
-            msg9 = "El bombillo se ha apagado"
-            print msg8
-            print msg9
+            answer = "Opción 0\n El bombillo se ha apagado"
+            GPIO.output(14, False) # Pin 2 en alto
 
-            GPIO.output(14, False) # Pin 2 en bajo
-
-            self.toLower(TextMessageProtocolEntity( msg8, to = para ))
-            self.toLower(TextMessageProtocolEntity( msg9, to = para ))
-
+            self.toLower(textmsg(answer, to = recipient ))
+            print answer
         else:
+            answer = "No le entiendo"
+            self.toLower(textmsg(answer, to = recipient ))
+            print answer
 
-            msgN = "No le entiendo !" 
-            print msgN
-            
-            self.toLower(TextMessageProtocolEntity( msgN, to = para ))
