@@ -12,12 +12,12 @@ $ sudo python setup.py install
 <pre>
 <code>
 $  yowsup-cli registration --requestcode sms --phone 49XXXXXXXX --cc 49 --mcc 123 --mnc 456
-$  yowsup-cli registration --register 123456 --phone 49XXXXXXXX --cc 49  
+$  yowsup-cli registration --register 123456* --phone 49XXXXXXXX --cc 49  
 </code>
 mcc y mnc, los puede consultar <a href="https://en.wikipedia.org/wiki/Mobile_country_code" target="_blank">Aquí</a>
 
 
-* Donde 123456, es el còdigo que llega  al celular en un mensaje de texto
+* Donde 123456, es el código que llega  al celular en un mensaje de texto
 </pre>
 
 <h3>Clonar el repositorio</h3>
@@ -29,9 +29,10 @@ $  cd Raspberry-Pi-WhatsApp
 Modificar:
 
 En <em>run.py</em>
-<code>CREDENTIALS = ("phone", "password") #replace with your phone and password</code>
+<code><em>CREDENTIALS = ("phone", "password") #replace with your phone and password</em></code>
 
 Luego ejecutar
+
 <code><b>$ sudo python run.py</b></code>
 </pre>
 
