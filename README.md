@@ -37,7 +37,7 @@ Luego ejecutar
 
 <h3>Plano</h3>
 <div align="center">
-  <img src="plano.jpg">
+  <img src="plano.jpg" width="50%">
 </div>
 
 
