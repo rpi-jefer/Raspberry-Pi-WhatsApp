@@ -14,6 +14,9 @@ $ sudo python setup.py install
 $  yowsup-cli registration --requestcode sms --phone 49XXXXXXXX --cc 49 --mcc 123 --mnc 456
 $  yowsup-cli registration --register 123456 --phone 49XXXXXXXX --cc 49  
 </code>
+mcc y mnc, los puede consultar <a href="https://en.wikipedia.org/wiki/Mobile_country_code" target="_blank">Aquí</a>
+
+
 * Donde 123456, es el còdigo que llega  al celular en un mensaje de texto
 </pre>
 
@@ -33,7 +36,9 @@ Luego ejecutar
 </pre>
 
 <h3>Plano</h3>
-
+<div align="center">
+  <img src="plano.jpg">
+</div>
 
 
 
