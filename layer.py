@@ -16,6 +16,7 @@ from yowsup.layers.protocol_chatstate.protocolentities import OutgoingChatstateP
 from yowsup.common.tools                               import Jid                               #is writing, writing pause
 
 name = "NAMEPRESENCE"
+print "Bienvenido, ya puede empezar a escribir !"
 
 class EchoLayer(YowInterfaceLayer):
     @ProtocolEntityCallback("message")
